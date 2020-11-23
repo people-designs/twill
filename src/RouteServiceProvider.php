@@ -45,7 +45,7 @@ class RouteServiceProvider extends ServiceProvider
         }
 
         $groupOptions = [
-            'as' => 'admin.',
+            'as' => config('twill.admin_middleware_as', 'admin.'),
             'middleware' => [config('twill.admin_middleware_group', 'web')],
             'prefix' => rtrim(ltrim(config('twill.admin_app_path'), '/'), '/'),
         ];
@@ -69,13 +69,13 @@ class RouteServiceProvider extends ServiceProvider
 
     private function mapHostRoutes($router, $groupOptions, $middlewares, $supportSubdomainRouting)
     {
-        if (file_exists(base_path('routes/admin.php'))) {
+        if (file_exists(config('twill.admin_host_route_path', base_path('routes/admin.php')))) {
             $hostRoutes = function ($router) use ($middlewares) {
                 $router->group([
-                    'namespace' => config('twill.namespace', 'App') . '\Http\Controllers\Admin',
+                    'namespace' => config('twill.namespace', 'App') . '\Http\Controllers\\' . config('twill.admin_controller_path', 'Admin'),
                     'middleware' => $middlewares,
                 ], function ($router) {
-                    require base_path('routes/admin.php');
+                    require config('twill.admin_host_route_path', base_path('routes/admin.php'));
                 });
             };
 
